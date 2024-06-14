@@ -1,0 +1,7 @@
+boto3==1.34.124
+botocore==1.34.124
+fastapi==0.111.0
+firebase_admin==6.5.0
+pydantic==2.7.4
+python-dotenv==1.0.1
+typing_extensions==4.12.2

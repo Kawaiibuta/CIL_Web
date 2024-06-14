@@ -1,0 +1,101 @@
+<main class="w-full h-full">
+    <div class="w-full h-full ">
+        <form class="w-full h-full m-4" onsubmit="submit_model(event)">
+            <div class="flex flex-row-reverse ">
+                <div class="w-fit">
+                    <button class="bg-black rounded-full py-2 px-4 text-white" type="submit"> Create</button>
+                </div>
+            </div>
+            <div class="flex h-14 w-full flex-col">
+                <label for="name">Tên mô hình</label>
+                <input type="text" class="border border-black-800 border-2 rounded-md flex grow" name="name" />
+            </div>
+            <div class="flex h-14 w-full flex-col ">
+                <label for="name">Phương pháp</label>
+                <select type="text" class="border border-black-800 border-2 rounded-md flex grow" name="method">
+                    <option>---Chọn phương pháp huấn luyện---</option>
+                    {% for item in methods %}
+                    <option value="{{item.id}}">{{item.name}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="flex w-fit mt-2">
+                <div class="flex flex-col mr-2">
+                    <label for="init_class"> Số lớp ban đầu </label>
+                    <input type="number" name="init_cls" class="border border-2 border-black-800" />
+
+                </div>
+                <div class="flex flex-col">
+                    <label for="init_class"> Số lớp tăng cường </label>
+                    <input type="number" name="inc_cls" class="border border-2 border-black-800" />
+
+                </div>
+
+            </div>
+            <div style="font-size:x-large; font-weight: bold;" class=" mt-4">Dữ liệu</div>
+            <div class="selected_data">
+
+            </div>
+            <button type="button" class="flex grow content-center justify-center w-full h-full" id="add-data"
+                onclick="dialog(event)">
+                <span class="material-symbols-outlined">
+                    add_circle
+                </span>
+            </button>
+        </form>
+        <div id="dialog_fragment" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity "></div>
+
+            <div class="fixed inset-0 z-10 w-screen flex justify-center">
+                <div
+                    class="h-1/2 w-1/2 bg-white self-center rounded-3xl p-6  overflow-y-scroll overflow-x-hidden no-scrollbar">
+                    <div class="flex justify-between w-full">
+                        <div style="font-size: x-large; font-weight: bold;">DATA</div>
+                        <span class="material-symbols-outlined hover:cursor-pointer" onclick="dialog(event)">
+                            close
+                        </span>
+                    </div>
+                    <div class="root_container"></div>
+                </div>
+            </div>
+        </div>
+        <script defer>
+            //Load data dialog fragment to the UI
+            up.render({ "target": ".root_container", "url": "/data/w3", "navigate": false })
+            function dialog(event) {
+                let target = document.getElementById('dialog_fragment')
+                if (target.className.includes("hidden"))
+                    target.className = target.className.replace("hidden", "")
+                else
+                    target.className = target.className + " hidden"
+            }
+            //Submit model function
+            function submit_model(event) {
+                event.preventDefault()
+                const data = new FormData(event.target)
+                const data_list = document.getElementsByClassName("selected_data")[0].querySelectorAll("div")
+                let value = Object.fromEntries(data.entries());
+                value.data = []
+                let result = []
+                for (var i = 0; i < data_list.length; i++)
+                    if (data_list[i].id.includes("__selected"))
+                        result.push(data_list[i].id.replace("__selected", '/').replace("_", "/"))
+
+                value.data = result
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                fetch("/model", { method: "POST", body: JSON.stringify(value), redirect: "follow", headers: myHeaders }).then(async (response) => {
+                    if (response.ok) {
+                        const json = await response.json();
+                        alert(json['message'])
+                        console.log(json)
+                        up.render({ "target": "main", "url": "./model"})
+                    }
+                    else
+                        alert("Some fields are missing or the field is not correctly formatted")
+
+                })
+            }
+        </script>
+</main>

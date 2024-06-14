@@ -1,0 +1,90 @@
+<main>
+    <div class="flex">
+        <form id="search"
+            class="relative rounded-3xl border border-black-800 border-2 w-3/4 flex content-center px-4 py-2"
+            method="GET" action="#">
+
+            <input class="w-full !outline-none" name="search" />
+            <button type="submit">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+
+            </button>
+
+        </form>
+        <div class="flex w-fit">
+            <div class="flex flex-wrap content-center mx-4 hover:cursor-pointer refresh" onclick="refresh();">
+
+                <span class="material-symbols-outlined">
+                    sync
+                </span>
+            </div>
+            <div up-href="/model/create" up-follow up-target="main" up-navigate='false'
+                class="flex flex-wrap content-center mx-4 hover:cursor-pointer">
+
+                <span class="material-symbols-outlined">
+                    add_circle
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="w-full h-full flex justify-center content-center mt-10">
+        {% if models|length > 0 %}
+        <div id="model-grid" class="grid-cols-5 gap-6 grid my-2 ml-2">
+
+            {% for item in models %}
+            <a href="model/detail/{{item.id}}" up-target="div">
+                <div
+                    class="border border-2 border-black-900 h-96 rounded-3xl overflow-hidden hover:scale-125 hover:z-10 hover:cursor-pointer bg-white duration-500 ">
+                    <img class="h-1/2 w-full" src="model_logo.png" />
+                    <div class="p-2" style="font-family: Inter;">
+                        <h2 id="name" style=" font-weight:800; font-size: 1.5vmax;">{{item.name}}</h2>
+                        <h4 id="create_date"> Ngay tao: {{item.created_at}}</h4>
+                        <h4 id="class_number"> So lop: {{item.cls_number}}</h4>
+                        <div class="flex flex-wrap">
+                            <div class="rounded-full bg-cyan-100 px-2 text-sm m-1">
+                                banh xeo
+                            </div>
+                            <div class="rounded-full bg-cyan-100 px-2 text-sm m-1">
+                                banh xeo
+                            </div>
+                            <div class="rounded-full bg-cyan-100 px-2 text-sm m-1">
+                                banh xeo
+                            </div>
+                            <div class="rounded-full bg-cyan-100 px-2 text-sm m-1 ">
+                                banh xeo
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>You haven't created any model yet. Press the plus icon on the top right conner to create a new model.</p>
+        {% endif %}
+    </div>
+    <script>
+        async function refresh(){
+            await up.render({"target": "main", "url": "./model"})
+        }
+        let refresh_icon = document.getElementsByClassName("refresh")[0]
+        refresh_icon.addEventListener('click', function (event) {
+            up.reload("main")
+        })
+        let form = document.getElementById("search")
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(form);
+            // output as an object
+            const data = Object.fromEntries(formData);
+            console.log(data.search)
+            up.render({ "target": "main", "url": "/model?search=" + data.search });
+        })
+    </script>
+</main>

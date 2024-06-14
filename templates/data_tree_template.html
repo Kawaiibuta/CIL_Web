@@ -1,0 +1,39 @@
+<div class="ml-2 {{key}}_container w-full">
+    <div class=" border-l-2 pl-2">
+
+        {% for item in objects %}
+        {% if item['type'] == "file" %}
+        <div class="flex h-8 content-center overflow-x-hidden w-full">
+            <div class="flex grow ml-2">{{item['item'].Key}}</div>
+        </div>
+        {% else %}
+        <div class="flex h-8 w-full">
+            <input type="checkbox" onchange='choose(event, key = `{{item["key"] | safe}}`)' name="{{item['key']}}" />
+            <div onclick="click(event)">
+                <a href="/data/w3?key={{item['key']}}" class="flex grow ml-2" up-target=".{{item['key']}}_container"
+                    up-navigate='false'>{{item['item']}}</a>
+            </div>
+        </div>
+        <div class="{{item['key']}}_container"></div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% if key == "root" %}
+    </form>
+    <script>
+        function submit(key) {
+            up.render({ "target": ".selected_data:after", "url": "/data/w3/" + key, "navigate": false })
+        }
+        function choose(event, key) {
+            if (event.target.checked) {
+                document.getElementsByClassName(key + "_container")[0].replaceChildren();
+                submit(key)
+            }
+        }
+        function click(event) {
+            event.target.previousSibling.checked = false;
+        }
+    </script>
+    {% endif %}
+
+</div>

@@ -1,0 +1,98 @@
+<main>
+    <div >
+        <div class="flex w-full justify-between ">
+            <div class="flex flex-col w-full">
+                <h2 style="font-size: 3vmax; font-weight: bold;">{{model_name}}</h2>
+                <div class="flex m-2">
+                    <h3>Ngay tao: </h3>
+                    <h3>{{created_at}}</h3>
+                </div>
+                <div class="rounded-se-xl rounded-es-xl border border-black-900 p-4 w-full">
+                    <div>Mo ta</div>
+                    <div class="w-full flex flex-wrap h-full">{{description}}</div>
+                </div>
+            </div>
+            <div class="flex w-full">
+                <img class="w-full" src="../model_logo.png" />
+            </div>
+        </div>
+        <div>
+            <h2 style="font-size: 2vmax; font-weight: 500;">Version</h2>
+            <table id="version-table" class="w-full">
+                {% for item in versions %}
+                <tr>
+                    <td class="border border-black-800 px-2">{{ item.created_at}}: {{item.description}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="my-2 h-96 ">
+            <h2 style="font-size: 2vmax; font-weight: 500;">Inference</h2>
+            <div class="flex h-full ">
+                <div
+                    class="w-3/4 border-black-800 border border-8 rounded-se-3xl rounded-es-3xl h-full flex justify-center content-center flex-wrap">
+                    <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)" class="w-auto"></div>
+                    <form class="box" method="post" action="" enctype="multipart/form-data">
+                        <div class="box__input">
+                            <input class="box__file" type="file" name="files[]" id="file"
+                                style="display: none ; visibility: hidden;" accept="image/png, image/gif, image/jpeg" />
+                            <label for="file" class="hover:cursor-pointer"><strong>Choose a file</strong><span
+                                    class="box__dragndrop"> or drag it
+                                    here</span>.</label>
+                        </div>
+                        <img id="show_image" src="" />
+                    </form>
+                </div>
+                <div class="w-1/4 pt-6 pl-2 flex flex-col">
+                    <button class="bg-black py-2 px-6 text-white font-bold rounded-full w-1/2">Predict</button>
+                    <div class="w-full border-4 border-black-900 ml-2  rounded-se-3xl rounded-es-3xl flex grow mt-2">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let input = document.getElementById("file")
+            input.addEventListener("change", function (event) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    document.getElementById("show_image").src = e.target.result
+                }
+    
+                reader.readAsDataURL(input.files[0]);
+                document.getElementsByClassName("box__input")[0].className += " hidden"
+    
+            })
+            let div = document.createElement('div');
+            let isAdvancedUpload = function () {
+                var div = document.createElement('div');
+                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+            }();
+            let form = document.getElementsByClassName("box")[0]
+            if (isAdvancedUpload) {
+                form.addClass('has-advanced-upload');
+            }
+            if (isAdvancedUpload) {
+    
+                var droppedFiles = false;
+    
+                form.on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                    .on('dragover dragenter', function () {
+                        form.addClass('is-dragover');
+                    })
+                    .on('dragleave dragend drop', function () {
+                        form.removeClass('is-dragover');
+                    })
+                    .on('drop', function (e) {
+                        droppedFiles = e.originalEvent.dataTransfer.files;
+                    });
+    
+            }
+    
+        </script>
+    </div>
+</main>

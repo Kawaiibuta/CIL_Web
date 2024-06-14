@@ -1,0 +1,85 @@
+.header {
+    font-family: 'Alumni Sans';
+    font-weight: bold;
+    font-size: 2vmax;
+    color: slategray;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header>a {
+    cursor: pointer;
+    height: fit-content;
+    background-size: 0% 4px;
+    background-position: 0 80%;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(black, black);
+    transition: all 1s;
+}
+
+.current {
+    color: black;
+    font-size: 5vmax;
+    background-size: 100% 4px !important;
+}
+
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+    display: none;
+}
+
+.box.has-advanced-upload {
+    background-color: white;
+    outline: 2px dashed black;
+    outline-offset: -10px;
+}
+
+.box.has-advanced-upload .box__dragndrop {
+    display: inline;
+}
+
+.box.is-dragover {
+    background-color: grey;
+}
+
+.box.is-uploading .box__input {
+    visibility: none;
+}
+
+.box.is-uploading .box__uploading {
+    display: block;
+}
+
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+main {
+    width: 100%;
+}
+
+div {
+    width: inherit;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+circle.fg {
+    transform: rotate(-90deg);
+    transform-origin: 125px 125px;
+}
