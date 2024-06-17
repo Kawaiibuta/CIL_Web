@@ -4,6 +4,10 @@ from routers import temp
 from routers import model
 from routers import data
 from routers import train
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 app = FastAPI()
 app.include_router(temp.router)
 app.include_router(model.router)

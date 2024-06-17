@@ -11,9 +11,7 @@ import logging
 import os
 import json
 from botocore.config import Config
-from dotenv import load_dotenv
 bucket_name = 'pycil.com'
-load_dotenv()  # take environment variables from .env.
 
 my_config = Config(
     region_name = 'ap-southeast-1',
