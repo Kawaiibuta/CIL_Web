@@ -8,29 +8,48 @@
             </div>
             <div class="flex h-14 w-full flex-col">
                 <label for="name">Tên mô hình</label>
+                {% if model %}
+                <div>{{model['name']}}</div>
+                {% else %}
                 <input type="text" class="border border-black-800 border-2 rounded-md flex grow" name="name" />
+                {% endif %}
             </div>
             <div class="flex h-14 w-full flex-col ">
                 <label for="name">Phương pháp</label>
+                {% if model %}
+                <div>{{model['method']['name']}}</div>
+                {% else %}
                 <select type="text" class="border border-black-800 border-2 rounded-md flex grow" name="method">
                     <option>---Chọn phương pháp huấn luyện---</option>
                     {% for item in methods %}
                     <option value="{{item.id}}">{{item.name}}</option>
                     {%endfor%}
                 </select>
+                {% endif %}
             </div>
             <div class="flex w-fit mt-2">
+                {% if not model %}
                 <div class="flex flex-col mr-2">
                     <label for="init_class"> Số lớp ban đầu </label>
                     <input type="number" name="init_cls" class="border border-2 border-black-800" />
 
                 </div>
-                <div class="flex flex-col">
+                {% endif %}
+                <div class="flex flex-col mr-2">
                     <label for="init_class"> Số lớp tăng cường </label>
                     <input type="number" name="inc_cls" class="border border-2 border-black-800" />
 
                 </div>
+                <div class="flex flex-col mr-2">
+                    <label for="init_class"> Epoch ban đầu </label>
+                    <input id="init_epoch" type="number" name="init_epoch" class="border border-2 border-black-800" />
 
+                </div>
+                <div class="flex flex-col">
+                    <label for="init_class"> Epoch tăng cường</label>
+                    <input id="inc_epoch" type="number" name="inc_epoch" class="border border-2 border-black-800" />
+
+                </div>
             </div>
             <div style="font-size:x-large; font-weight: bold;" class=" mt-4">Dữ liệu</div>
             <div class="selected_data">
@@ -71,11 +90,14 @@
                     target.className = target.className + " hidden"
             }
             //Submit model function
-            function submit_model(event) {
+            async function submit_model(event) {
                 event.preventDefault()
+                up.element.show(document.getElementsByTagName("loading-indicator")[0])
                 const data = new FormData(event.target)
                 const data_list = document.getElementsByClassName("selected_data")[0].querySelectorAll("div")
                 let value = Object.fromEntries(data.entries());
+                delete value.init_epoch
+                delete value.inc_epoch
                 value.data = []
                 let result = []
                 for (var i = 0; i < data_list.length; i++)
@@ -85,17 +107,39 @@
                 value.data = result
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
-                fetch("/model", { method: "POST", body: JSON.stringify(value), redirect: "follow", headers: myHeaders }).then(async (response) => {
+                result = await fetch("/model", { method: "POST", body: JSON.stringify(value), redirect: "follow", headers: myHeaders }).then(async (response) => {
                     if (response.ok) {
-                        const json = await response.json();
-                        alert(json['message'])
-                        console.log(json)
-                        up.render({ "target": "main", "url": "./model"})
+                        return await response.json()
                     }
-                    else
+                    else {
                         alert("Some fields are missing or the field is not correctly formatted")
+                        return null
+                    }
 
                 })
+                if (result) {
+                    const data = JSON.stringify({
+                        "model": result['data']['id'],
+                        "name": "Initial training",
+                        "description": "Initial training",
+                        "init_epoch": document.getElementById("init_epoch").value,
+                        "inc_epoch": document.getElementById("inc_epoch").value
+                    })
+                    await fetch("/train", { method: "POST", body: data, redirect: "follow", headers: myHeaders }).then(async (response) => {
+                        if (response.ok) {
+                            const json = await response.json();
+                            alert(json['message'])
+                            console.log(json)
+                            up.render({ "target": "main", "url": "./model" })
+                        }
+                        else {
+                            alert("An Error has ocurred.")
+                            return null;
+                        }
+                    })
+                    up.element.hide(document.getElementsByTagName("loading-indicator")[0])
+                }
+
             }
         </script>
 </main>

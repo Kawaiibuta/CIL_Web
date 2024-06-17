@@ -6,11 +6,13 @@
 # Services (AWS) SDK for Python. This library allows Python developers to interact with various AWS
 # services programmatically.
 import boto3
+from botocore.exceptions import ClientError
+import logging
 import os
+import json
 from botocore.config import Config
-
 from dotenv import load_dotenv
-
+bucket_name = 'pycil.com'
 load_dotenv()  # take environment variables from .env.
 
 my_config = Config(
@@ -29,7 +31,7 @@ client = boto3.client(
 
 async def check_folder(key):
     result =[]
-    response = client.list_objects_v2(Bucket="pycil.com",Delimiter="/", Prefix=key)
+    response = client.list_objects_v2(Bucket=bucket_name,Delimiter="/", Prefix=key)
     sub_folder = response.get('CommonPrefixes')
     if sub_folder:
         for x in sub_folder:
@@ -38,7 +40,7 @@ async def check_folder(key):
         result.append(key)
     return result 
 async def count_image(key):
-    response = client.list_objects_v2(Bucket='pycil.com', Delimiter='/', Prefix=key)
+    response = client.list_objects_v2(Bucket=bucket_name, Delimiter='/', Prefix=key)
     count = 0
     for x in response['Contents'][1:]:
         print(x)
