@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, File, UploadFile
 from datetime import date
 from fastapi.templating import Jinja2Templates
 from models.model import Model, get_all_model, get_model
@@ -54,3 +54,8 @@ async def delete_model(id: str):
         return HTTPException(status_code=404, detail="The model cannot be found in database.")
     doc_ref.update({"status": "DISABLED"})
     return JSONResponse(content={"message": "The model has been disabled an cannot be used except being reset by admin."}, status_code=200)
+@router.post("/{id}/predict")
+async def predict(id: str, image: UploadFile = File(...)):
+    model = await get_model(id)
+    result = await model.inference(image=image)
+    return JSONResponse(status_code=200, content=jsonable_encoder({"image": result}))

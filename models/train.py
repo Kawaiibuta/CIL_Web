@@ -60,7 +60,8 @@ class Train(BaseModel):
             return result
         with open("configs/base_config.json", "r") as f:
             config = json.load(f)
-            config['model_name'] = get_method(model.method - 1)
+            print(isinstance(model.method, dict))
+            config['model_name'] = model.method['name'] if isinstance(model.method, dict) else get_method(model.method - 1)["name"]
             config['path'] = folder_path + "data"
             config['init_cls'] = model.init_cls
             config['increment'] = model.inc_cls

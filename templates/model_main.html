@@ -153,5 +153,38 @@
 
             })
         }
+        function upload_image(event) {
+            let input = document.getElementById("file")
+
+            var reader = new FileReader();
+            console.log("here")
+            reader.onload = function (e) {
+                document.getElementById("show_image").src = e.target.result
+            }
+
+            reader.readAsDataURL(input.files[0]);
+            document.getElementsByClassName("box__input")[0].className += " hidden"
+
+        }
+        async function predict(model) {
+            let input = document.getElementById("file")
+            let data = new FormData()
+            data.append("image", input.files[0], input.files[0].name);
+            prediction = await fetch("/model/" + model + "/predict", { method: "POST", body: data}).then(async (response) => {
+                data = await response.json()
+                if (response.status == 200)
+                    return data
+                else {
+                    alert(data['message'])
+                    return null
+                }
+            }).catch((error) => {
+                alert(error)
+                return null
+            })
+            if (prediction) {
+                document.getElementById("predict_container").textContent = JSON.stringify(prediction, undefined, 2)
+            }
+        }
     </script>
 </main>

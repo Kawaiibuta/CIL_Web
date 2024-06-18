@@ -29,6 +29,10 @@
                 document.getElementsByClassName(key + "_container")[0].replaceChildren();
                 submit(key)
             }
+            else {
+                console.log(key + "container"   )
+                document.getElementById(key + "_selected").remove();
+            }
         }
         function click(event) {
             event.target.previousSibling.checked = false;

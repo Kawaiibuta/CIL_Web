@@ -3,7 +3,10 @@ from pydantic import BaseModel
 from firebase import db
 from connect_s3 import check_folder
 from datetime import datetime
-
+from fastapi import UploadFile
+import cv2
+import numpy as np
+import random
 class Model(BaseModel):
     
     # The line `id: Union(str | None)` in the `Model` class is defining the `id` attribute as a Union
@@ -62,7 +65,13 @@ class Model(BaseModel):
             "cls_list": self.cls_list,
             "cls_number": len(self.cls_list)
         }
-        
+    async def inference(self, image: UploadFile, top_k = 5):
+        data = await image.read()
+        nparray = np.fromstring(data, np.int8)
+        img = cv2.imdecode(nparray, cv2.IMREAD_COLOR)
+        result = [{"class": cls_name,"confidence": float("{:2f}".format(random.random()))} for cls_name in self.cls_list]
+        result = sorted(result, key=lambda x: x['confidence'])
+        return result
 async def get_all_model(search: str = None, order_by: str='name'):
     docs  = db.collection("models").where("status", "!=", "DISABLED").order_by(order_by).stream()
     result = []
