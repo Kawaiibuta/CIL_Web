@@ -23,10 +23,10 @@ async def model_add(request: Request, id=None):
     if id:
         model = await get_model(id)
         if model:
-            result = {"model": model.to_dict(), "request": request}
+            result = {"model": model.to_dict(), "request": request, 'resume': True}
             return templates.TemplateResponse(name="model_template.html", context=result)
         return HTTPException(status_code=404, detail = "The model cannot be found")
-    result = {"methods": await getAllMethod(), "request": request}
+    result = {"methods": await getAllMethod(), "request": request, 'resume': False}
     return templates.TemplateResponse(name="model_template.html", context=result)
 @router.get("/detail/{id}")
 async def model_detail(request: Request, id: str):

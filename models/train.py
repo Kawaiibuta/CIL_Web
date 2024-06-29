@@ -47,7 +47,16 @@ class Train(BaseModel):
         db.collection("trains").document(self.id).update({"status": "PROCESSING"})
         if not await self.create_train_directory():
             return {"message": "Create training folder unsuccessfully.", "model": self, "train": None}
-        return {"message": "Training started", "model": (await get_model(self.model)).to_dict(), "train": self}
+        import requests
+        url = "https://devsecopai-pycil.hf.space/train/workings/{self.model}"
+        payload = ""
+        headers = {}
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        if response.status_code == 200:
+            return {"message": "Training started", "model": (await get_model(self.model)).to_dict(), "train": self}
+        return {"message": "Train cannot be start.", "model": self, "train": None}
     async def create_train_directory(self):
         model = (await get_model(self.model))
         response = client.list_objects_v2(Bucket='pycil.com')
@@ -101,10 +110,10 @@ async def move_data_to_train_directory(model: Model, training_key : str):
     client.put_object(Bucket = bucket_name, Key = training_key + "data/")
     for key in model.data:                                                                                                                                                                                         
         try:
-            client.put_object(Bucket=bucket_name, Key = training_key + "data/" + key.split("/")[-2])
+            client.put_object(Bucket=bucket_name, Key = training_key + "data/" + key.split("/")[-2] + "/")
             response = client.list_objects_v2(Bucket=bucket_name, Prefix=key)
             for object in response['Contents'][1:]:
-                copy_response = client.copy(CopySource={'Bucket': bucket_name, 'Key': object["Key"]}, Bucket=bucket_name, Key = training_key + "data/" + object["Key"].split("/")[-1])
+                copy_response = client.copy(CopySource={'Bucket': bucket_name, 'Key': object["Key"]}, Bucket=bucket_name, Key = training_key + "data/" + key.split("/")[-2] + "/" + object["Key"].split("/")[-1])
         except ClientError as e:
             logging.error(e)
             return False

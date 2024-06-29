@@ -63,7 +63,7 @@
                     <div
                         class="w-3/4 border-black-800 border border-8 rounded-se-3xl rounded-es-3xl h-full flex justify-center content-center flex-wrap">
                         <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)" class="w-auto"></div>
-                        <form class="box" method="post" action="" enctype="multipart/form-data">
+                        <form class="box max-w-full max-h-full" method="post" action="" enctype="multipart/form-data">
                             <div class="box__input">
                                 <input class="box__file" type="file" name="files[]" id="file" style="display: none ;"
                                     accept="image/png, image/gif, image/jpeg" onchange="upload_image(event)" />
@@ -71,12 +71,20 @@
                                         class="box__dragndrop"> or drag it
                                         here</span>.</label>
                             </div>
-                            <img id="show_image" src="" />
+                            <img id="show_image" src="" class="object-scale-down max-w-full max-h-full w-full" />
                         </form>
                     </div>
                     <div class="w-1/4 pt-6 pl-2 flex flex-col">
-                        <button class="bg-black py-2 px-6 text-white font-bold rounded-full w-1/2"
-                            onclick="predict('{{id}}');">Predict</button>
+                        <div class="flex w-3/4">
+                            <button class="bg-black py-2 px-6 text-white font-bold rounded-full w-1/2 grow"
+                                onclick="predict('{{id}}');">Predict</button>
+                            <div class="flex wrap content-center cursor-pointer" onclick="reset()">
+
+                                <span class="material-symbols-outlined">
+                                    restart_alt
+                            </div>
+                            </span>
+                        </div>
                         <pre id="predict_container"
                             class="w-full border-4 border-black-900 ml-2  rounded-se-3xl rounded-es-3xl flex grow mt-2 p-4" />
                     </div>

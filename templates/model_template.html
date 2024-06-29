@@ -1,6 +1,6 @@
 <main class="w-full h-full">
     <div class="w-full h-full ">
-        <form class="w-full h-full m-4" onsubmit="submit_model(event)">
+        <form class="w-full h-full m-4" onsubmit="submit_model(event, '{{resume}}') ">
             <div class="flex flex-row-reverse ">
                 <div class="w-fit">
                     <button class="bg-black rounded-full py-2 px-4 text-white" type="submit"> Create</button>
@@ -90,8 +90,9 @@
                     target.className = target.className + " hidden"
             }
             //Submit model function
-            async function submit_model(event) {
+            async function submit_model(event, resume) {
                 event.preventDefault()
+                if(resume == "True")
                 up.element.show(document.getElementsByTagName("loading-indicator")[0])
                 const data = new FormData(event.target)
                 const data_list = document.getElementsByClassName("selected_data")[0].querySelectorAll("div")
@@ -141,5 +142,6 @@
                 }
 
             }
+
         </script>
 </main>
